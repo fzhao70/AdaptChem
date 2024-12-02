@@ -1,2 +1,2 @@
 # AdaptChem
-Adaptive Atmospheric Chemistry Mechanism Toolkit with Machine Learning
+Adaptive Atmospheric Chemistry Mechanism Toolkit with Hybrid Machine Learning
