@@ -101,8 +101,11 @@ class TraditionalFineTuner:
                 num_batches += 1
             
             avg_loss = total_loss / num_batches
-            scheduler.step(avg_loss)
-            
+
+            # Update learning rate scheduler if it exists
+            if patience is not None:
+                scheduler.step(avg_loss)
+
             if avg_loss < best_loss:
                 best_loss = avg_loss
                 best_model_state = model.state_dict().copy()
