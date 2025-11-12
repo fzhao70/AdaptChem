@@ -8,10 +8,10 @@ from stable_baselines3 import SAC
 from stable_baselines3.common.callbacks import BaseCallback
 from typing import Dict, Any, Optional, Union, Tuple
 
-from base_model import DemoModel
-from method_ft import TraditionalFineTuner
-from method_rl import RLFineTuner
-from method_dpo import ChemistryDPOTuner
+from .base_model import DemoModel
+from .method_ft import TraditionalFineTuner
+from .method_rl import RLFineTuner
+from .method_dpo import ChemistryDPOTuner
 
 class ChemistryMechanismAdapter:
     """Main class combining all fine-tuning approaches"""

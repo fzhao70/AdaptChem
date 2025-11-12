@@ -67,9 +67,8 @@ class DPOLoss(nn.Module):
         
         # Calculate logits
         logits = (score_1 - score_2) / self.beta
-        
+
         # Calculate DPO loss
-        print(logits, preference.float())
         loss = F.binary_cross_entropy_with_logits(logits, preference.float())
         
         return loss
@@ -104,14 +103,14 @@ class ChemistryDPOTuner:
         paired_outputs = outputs[paired_indices]
         paired_uncertainties = uncertainties[paired_indices]
         
-        # Calculate preferences based on weighted prediction error
+        # Calculate preferences based on data quality (lower uncertainty = better quality)
+        # In the absence of a reference model, we use uncertainty as a proxy for data quality
         with torch.no_grad():
-            errors = torch.mean(
-                (outputs - outputs) ** 2 / uncertainties.mean(dim=1, keepdim=True),
-                dim=1
-            )
+            # Calculate average uncertainty per sample (lower is better)
+            quality_scores = uncertainties.mean(dim=1)
+            # Prefer samples with lower uncertainty
             preferences = (
-                errors[paired_indices[:, 0]] < errors[paired_indices[:, 1]]
+                quality_scores[paired_indices[:, 0]] < quality_scores[paired_indices[:, 1]]
             ).float()
         
         return (
@@ -206,7 +205,7 @@ if __name__ == '__main__':
         tuner = ChemistryDPOTuner(**kwargs)
         return tuner.fine_tune(model, inputs, outputs, uncertainties)
     
-    from base_model import DemoModel
+    from .base_model import DemoModel
     pertrained_model = DemoModel(40, 20, 20)
     
     obs = torch.randn(100, 40)
